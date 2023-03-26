@@ -1,26 +1,24 @@
-const container = document.querySelector(".container");
-const count = document.getElementById("count");
-const amount = document.getElementById("amount");
-const select = document.getElementById("movie");
-const seats = document.querySelectorAll(".seat:not(.reserved)");
+const container = document.querySelector('.container');
+const count = document.getElementById('count');
+const amount = document.getElementById('amount');
+const select = document.getElementById('movie');
+const seats = document.querySelectorAll('.seat:not(.reserved)');
+
+getFromlocalStorage();
 calculateTotal();
-getFromLocalStorage();
-container.addEventListener("click", function(e) {
-    if (
-        e.target.classList.contains("seat") &&
-        !e.target.classList.contains("reserved")
-    ) {
-        e.target.classList.toggle("selected");
+
+container.addEventListener('click', function(e) {
+    if (e.target.classList.contains('seat') && !e.target.classList.contains('reserved')) {
+        e.target.classList.toggle('selected');
         calculateTotal();
     }
-});
-select.addEventListener("change", function(e) {
+})
+select.addEventListener('change', function(e) {
     calculateTotal();
-});
+})
 
 function calculateTotal() {
-    const selectedSeats = container.querySelectorAll(".seat.selected");
-
+    const selectedSeats = container.querySelectorAll('.seat.selected');
     const selectedSeatsArr = [];
     const seatsArr = [];
     selectedSeats.forEach(function(seat) {
@@ -29,19 +27,24 @@ function calculateTotal() {
     seats.forEach(function(seat) {
         seatsArr.push(seat);
     });
-    let selectedSeatIndexs = selectedSeatsArr.map(function(seat) {
+    let selectedSeatsIndexes = selectedSeatsArr.map(function(seat) {
         return seatsArr.indexOf(seat);
     });
-    let selectedSeatCount = selectedSeats.length;
+    let selectedSeatsCount = selectedSeats.length;
     count.innerText = selectedSeats.length;
-    amount.innerText = selectedSeatCount * select.value;
+    amount.innerText = selectedSeatsCount * select.value;
 
-    saveTolocalStorage(selectedSeatIndexs);
+    saveTolocalStorage(selectedSeatsIndexes);
 }
 
-function getFromLocalStorage() {
-    const selectedSeats = JSON.parse(localStorage.getItem("selectedSeats"));
+function saveTolocalStorage(indexes) {
+    localStorage.setItem('selectedSeats', JSON.stringify(indexes));
+    localStorage.setItem("selectedSeatsMovie", select.selectedIndex);
+}
 
+function getFromlocalStorage() {
+    const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats'));
+    const selectedMovieIndex = localStorage.getItem(localStorage.getItem('selectedMovieIndex'));
     if (selectedSeats != null && selectedSeats.length > 0) {
         seats.forEach(function(seat, index) {
             if (selectedSeats.indexOf(index) > -1) {
@@ -49,13 +52,7 @@ function getFromLocalStorage() {
             }
         });
     }
-    const selectedMovieIndex = localStorage.getItem('selectMovieIndex');
     if (selectedMovieIndex != null) {
         select.selectedIndex = selectedMovieIndex;
     }
-}
-
-function saveTolocalStorage(indexs) {
-    localStorage.setItem("selectedSeats", JSON.stringify(indexs));
-    localStorage.setItem("selectedMovie", select.selectedIndex);
 }
